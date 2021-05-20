@@ -6,6 +6,7 @@ from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 from modules.product.model.products import PRODUCTS
 from modules.product.model.product import Product, ProductForm
+from modules.product.model.category import Category
 
 product = Blueprint('product', __name__)
 
@@ -22,9 +23,11 @@ def show(id):
 @product.route('/create-product', methods=['GET', 'POST'])
 def create():
    form = ProductForm(meta={'csrf': False})
+   categories = [ (c.id, c.name) for c in Category.query.all()]
+   form.category_id.choices = categories
 
    if form.validate_on_submit():
-      p = Product(request.form.get('name'), request.form.get('price'))
+      p = Product(request.form['name'], request.form['price'], request.form['category_id'])
       db.session.add(p)
       db.session.commit()
       flash("Producto guardado exitosamente.")
@@ -39,14 +42,18 @@ def create():
 def update(id):
    form = ProductForm(meta={'csrf': False})
    product = Product.query.get_or_404(id)
+   categories = [(c.id, c.name) for c in Category.query.all()]
+   form.category_id.choices = categories
 
    if request.method == 'GET':
       form.name.data = product.name
       form.price.data = product.price
+      form.category_id.data = product.category_id
 
    if form.validate_on_submit():
       product.name = form.name.data
       product.price = form.price.data
+      product.category_id = form.category_id.data
       db.session.add(product)
       db.session.commit()
       flash("Producto actualizado exitosamente.")

@@ -5,8 +5,10 @@ app = Flask(__name__)
 app.config.from_object('configuration.DevelopmentConfig')
 db = SQLAlchemy(app)
 
-from modules.product.views import product
+from modules.product.product import product
+from modules.product.category import category
 app.register_blueprint(product)
+app.register_blueprint(category)
 db.create_all()
 
 # SQLite

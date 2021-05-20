@@ -5,3 +5,11 @@
 .list-product .even {
     background: #eeebeb;
 }
+
+.list-category .odd {
+    background: #c9c4c4;
+}
+
+.list-category .even {
+    background: #eeebeb;
+}
